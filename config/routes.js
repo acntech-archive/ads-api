@@ -1,5 +1,6 @@
 module.exports = function (app) {
     var mediaplayerApi = require('../app/controllers/mediaplayerApi');
+    
 
     // Media Player API Routes
     app.get('/api/player', mediaplayerApi.readAllPlayers());
@@ -7,4 +8,9 @@ module.exports = function (app) {
     app.put('/api/player/:id', mediaplayerApi.updatePlayer());
     app.post('/api/player', mediaplayerApi.createPlayer());
     app.delete('/api/player/:id', mediaplayerApi.deletePlayer());
+
+
+    //File upload API Routes
+    //app.get('/api/sources/fileupload', fileupload.readAllFiles());
+    //app.post('/api/sources/fileupload', fileupload.addimage());
 };
