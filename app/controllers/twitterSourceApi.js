@@ -1,30 +1,16 @@
-var oauth = require('oauth');
-var NodeCache = require('node-cache');
+var oauth = require('oauth'),
+    mongoose = require('mongoose'),
+    TwitterConfig = mongoose.model('TwitterConfig'),
+    NodeCache = require('node-cache');
 
 var tweetCache = new NodeCache();
 var lastUpdate = 0;
 
 exports.readAll = function () {
-    return function (rew, res) {
+    var fetchTweets = function (config, res) {
         var response = res;
-        if (Math.floor((new Date() - lastUpdate) / 1000) < 15) {
-            console.log('Cache hit!');
-            console.log('Tweets in the cache:');
-            var tweets;
-            tweetCache.get('latestTweets', function (err, value) {
-                if (!err) {
-                    tweets = value.latestTweets;
-                    var i;
-                    for (i = 0; i < tweets.length; i++) {
-                        console.log('Tweet ' + i + ': ' + tweets[i].text + ' (from cache)');
-                    }
-                    response.json(tweets);
-                }
-            });
-        }
-        else {
-            console.log('Cache miss!');
-            var callback = function (error, data, res) {
+        var twitterUrl = 'https://api.twitter.com/1.1/search/tweets.json?',
+            callback = function (error, data, res) {
                 // Uncomment to print Twitter-response
                 //console.log(JSON.stringify(data));
                 var i, j;
@@ -44,16 +30,16 @@ exports.readAll = function () {
                         createdAt: status.created_at
                     };
 
-                    if(status.place !== undefined && status.place !== null) {
+                    if (status.place !== undefined && status.place !== null) {
                         tweet.place = {
                             name: status.place.name,
                             country: status.place.country
                         }
                     }
 
-                    if(status.entities.media != undefined) {
+                    if (status.entities.media != undefined) {
                         var medias = []
-                        for(j = 0;j < status.entities.media.length;j++) {
+                        for (j = 0; j < status.entities.media.length; j++) {
                             var media = {
                                 id: status.entities.media[j].id,
                                 mediaUrl: status.entities.media[j].media_url
@@ -85,20 +71,37 @@ exports.readAll = function () {
                         console.log("ERROR: Unable to flush the tweet-cache.");
                     }
                 });
-            };
+            },
+            oAuthUrl = 'https://twitter.com/oauth/';
 
-            oa.get('https://api.twitter.com/1.1/search/tweets.json?q=%23ACNTech', token, secrettoken, function (error, data, response) {
-                if (error) {
-                    callback(error, response, 'https://api.twitter.com/1.1/search/tweets.json?q=#ACNTech');
-                } else {
-                    callback(null, JSON.parse(data), response);
+        var oa = new oauth.OAuth(oAuthUrl + 'request_token', oAuthUrl + 'access_token',
+            config.consumerKey, config.consumerSecret, "1.0A", config.callbackUrl, "HMAC-SHA1");
+
+        oa.get(twitterUrl + 'q=%23' + config.hashes[0].hash, config.accessToken, config.accessTokenSecret, function (error, data, response) {
+            if (error) {
+                callback(error, response, twitterUrl + 'q=%23' + config.hashes[0].hash);
+            } else {
+                callback(null, JSON.parse(data), response);
+            }
+        });
+    };
+
+    return function (req, res) {
+        if (Math.floor((new Date() - lastUpdate) / 1000) < 15) {
+            console.log('Cache hit!');
+            tweetCache.get('latestTweets', function (err, value) {
+                if (!err) {
+                    res.json(value.latestTweets);
                 }
             });
-
-            lastUpdate = new Date();
         }
-
-
-
+        else {
+            console.log('Cache miss!');
+            lastUpdate = new Date();
+            TwitterConfig.find(function (error, configs) {
+                // TODO: Something else than a "hacky" pull first result?
+                fetchTweets(configs[0], res);
+            });
+        }
     }
 };
