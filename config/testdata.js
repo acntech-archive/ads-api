@@ -3,7 +3,7 @@ module.exports = function () {
     // Test data for Media Player
     var mongoose = require('mongoose'),
         MediaPlayer = mongoose.model('MediaPlayer');
-
+    var fs = require('fs');
     // Clear out the old data
     MediaPlayer.remove({}, function (err) {
         if (err) {
@@ -100,7 +100,7 @@ module.exports = function () {
 // Create media player named #perl
     mp = new MediaPlayer({
         name: 'Perl',
-        ip: '127.0.0.113    ',
+        ip: '127.0.0.113',
         location: {floor: 4, zone: 'internal'},
         isActive: true
     });
@@ -108,4 +108,15 @@ module.exports = function () {
         if (err) console.log('Error on saving media player #perl!');
         else console.log('Saved new media player #perl');
     });
+
+
+    
+
+    
+
+
+     
+
+
+
 }
