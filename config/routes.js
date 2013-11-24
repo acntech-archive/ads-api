@@ -12,5 +12,5 @@ module.exports = function (app) {
 
     // Source API routes
     app.get('/api/sources/ruter', ruterApi.getDepartures());
-    app.get('/api/sources/twitter', ruterApi.getDepartures());
+    app.get('/api/sources/twitter', twitterSourceApi.readAll());
 };
