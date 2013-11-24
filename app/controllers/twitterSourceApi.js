@@ -1,10 +1,24 @@
 var oauth = require('oauth'),
     mongoose = require('mongoose'),
     TwitterConfig = mongoose.model('TwitterConfig'),
-    NodeCache = require('node-cache');
+    NodeCache = require('node-cache'),
+    Q = require('q');
 
 var tweetCache = new NodeCache();
 var lastUpdate = 0;
+
+exports.fetchConfig = function () {
+    return function (req, res) {
+        var deferred = Q.defer();
+        TwitterConfig.find(function (error, configs) {
+            // TODO: Something else than a "hacky" pull first result?
+            var config = configs[0];
+            deferred.resolve(config);
+            res.json(config);
+        });
+        return deferred.promise;
+    };
+};
 
 exports.readAll = function () {
     var fetchTweets = function (config, res) {
@@ -98,9 +112,8 @@ exports.readAll = function () {
         else {
             console.log('Cache miss!');
             lastUpdate = new Date();
-            TwitterConfig.find(function (error, configs) {
-                // TODO: Something else than a "hacky" pull first result?
-                fetchTweets(configs[0], res);
+            exports.fetchConfig()(req, res).then(function (config) {
+                fetchTweets(config, res);
             });
         }
     }
