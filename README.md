@@ -11,12 +11,15 @@
 git clone https://github.com/acntech/ads-api.git
 cd ads-api
 npm install
-start mongoDB in another terminal or background (MacOSX: mongod, Windows: ?)
+start mongoDB in another terminal or background (MacOSX: mongod, Windows: mongod, alternatively using '--db-path as well')
 Start API node server by: node server.js
 
 ```
-You should be able to test REST API for the ADS API Open a web browser and go to [http://localhost:5000/api/player](http://localhost:5000/api/player)
 
+You also have to go to Dropbox and add the lines from Digital Signage/Div/twitterkonto.txt to config/testdata.js
+
+
+You should be able to test REST API for the ADS API Open a web browser and go to [http://localhost:5000/api/player](http://localhost:5000/api/player)
 
 
 ## API
@@ -55,6 +58,11 @@ Tip: use [Chrome Rest Console](https://chrome.google.com/webstore/detail/rest-co
           <td>/api/player/:id</td>
           <td>Delete existing Media Player by ID</td>
         </tr>
+        <tr>
+          <td>GET</td>
+          <td>/api/sources/twitter</td>
+          <td>Fetch all tweets using the search-string defined in the DB</td>
+        </tr>
       </tbody>
 </table>
 
@@ -91,7 +99,6 @@ Tip: use [Chrome Rest Console](https://chrome.google.com/webstore/detail/rest-co
        type: Date,
        default: Date.now
     }
-          
 ```
 
 ### Example
@@ -126,5 +133,3 @@ Tip: use [Chrome Rest Console](https://chrome.google.com/webstore/detail/rest-co
       }
 ]
 ```
-
-
