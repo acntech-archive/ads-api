@@ -4,6 +4,8 @@
 * [Git](http://git-scm.com/downloads)
 * [NodeJS and npm](http://nodejs.org/download/)
 * [MongoDB](http://www.mongodb.org/downloads)
+* [Heroku Toolbelt](https://toolbelt.heroku.com/)
+* [A Heroku user account](https://devcenter.heroku.com/articles/quickstart) (see step 1,2 and 3)
 * [Chrome Rest Console](https://chrome.google.com/webstore/detail/rest-console/cokgbflfommojglbmbpenpphppikmonn?hl=en)
 
 ## Getting started
@@ -18,6 +20,7 @@ Start API node server by: node server.js
 
 You also have to go to Dropbox and add the lines from Digital Signage/Div/twitterkonto.txt to config/testdata.js
 
+All of these tasks should be ran from the root folder of the project.
 
 You should be able to test REST API for the ADS API Open a web browser and go to [http://localhost:5000/api/player](http://localhost:5000/api/player)
 
@@ -99,6 +102,7 @@ Tip: use [Chrome Rest Console](https://chrome.google.com/webstore/detail/rest-co
        type: Date,
        default: Date.now
     }
+
 ```
 
 ### Example
