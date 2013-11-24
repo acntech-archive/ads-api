@@ -14,7 +14,9 @@ exports.fetchConfig = function () {
             // TODO: Something else than a "hacky" pull first result?
             var config = configs[0];
             deferred.resolve(config);
-            res.json(config);
+
+            if (res)
+                res.json(config);
         });
         return deferred.promise;
     };
@@ -101,6 +103,7 @@ exports.readAll = function () {
     };
 
     return function (req, res) {
+        var response = res;
         if (Math.floor((new Date() - lastUpdate) / 1000) < 15) {
             console.log('Cache hit!');
             tweetCache.get('latestTweets', function (err, value) {
@@ -112,8 +115,8 @@ exports.readAll = function () {
         else {
             console.log('Cache miss!');
             lastUpdate = new Date();
-            exports.fetchConfig()(req, res).then(function (config) {
-                fetchTweets(config, res);
+            exports.fetchConfig()(null, null).then(function (config) {
+                fetchTweets(config, response);
             });
         }
     }
