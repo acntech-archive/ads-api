@@ -8,14 +8,13 @@ var Q = require('q');
 var FILE_PATH = "http://localhost:5000/api/sources/file/";
 
 exports.addFile = function() {
-    return function($req, $res) {
-        console.log(req.files.myFile);
+    return function(req, res) {
         var id = new ObjectID();
         var gs = GridStore(mongoose.connection.db, id, "w", {
-            "content_type": $req.files.files[0].type,
+            "content_type": req.files.files[0].type,
             "metadata": {
-                "name": $req.files.files[0].originalFilename,
-                "size": $req.files.files[0].size,
+                "name": req.files.files[0].originalFilename,
+                "size": req.files.files[0].size,
                 "url": FILE_PATH + id,
                 "thumbnailUrl": FILE_PATH + id,
                 "deleteUrl": FILE_PATH + id,
@@ -24,12 +23,12 @@ exports.addFile = function() {
 
             "chunk_size": 1024 * 4
         });
-        gs.writeFile(req.files.myFile.path, function(err, file) {
+        gs.writeFile(req.files.files[0].path, function(err, file) {
             if (!err) {
                 var response = {
                     "files": [{
-                        "name": $req.files.files[0].originalFilename,
-                        "size": $req.files.files[0].size,
+                        "name": req.files.files[0].originalFilename,
+                        "size": req.files.files[0].size,
                         "url": FILE_PATH + id,
                         "thumbnailUrl": FILE_PATH + id,
                         "deleteUrl": FILE_PATH + id,
