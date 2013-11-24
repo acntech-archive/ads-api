@@ -19,7 +19,7 @@ You should be able to test REST API for the ADS API Open a web browser and go to
 
 
 
-## API
+##Mediaplayer API
 Tip: use [Chrome Rest Console](https://chrome.google.com/webstore/detail/rest-console/cokgbflfommojglbmbpenpphppikmonn?hl=en) to test the REST API.
 <table class="table table-hover table-striped">
       <thead>
@@ -126,5 +126,93 @@ Tip: use [Chrome Rest Console](https://chrome.google.com/webstore/detail/rest-co
       }
 ]
 ```
+
+## File API
+
+Only jpeg files are supported now.
+
+Tip: use [Chrome Rest Console](https://chrome.google.com/webstore/detail/rest-console/cokgbflfommojglbmbpenpphppikmonn?hl=en) to test the REST API.
+<table class="table table-hover table-striped">
+      <thead>
+        <tr>
+          <th>HTTP Action</th>
+          <th>Route</th>
+          <th>Description</th>
+          <th>Returns</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>GET</td>
+          <td>/api/sources/file</td>
+          <td>Reads information about all files</td>
+          <td>JSON array of all files stored. The GridStore ID, contentType, originalFileName, created, and length fields are returned. 
+        </tr>
+        <tr>
+          <td>GET</td>
+          <td>/api/sources/file/:id</td>
+          <td>Get jpeg image by ID</td>
+          <td>Returns the jpeg binary data to the caller</th>
+        </tr>
+        <tr>
+          <td>POST</td>
+          <td>/api/sources/file</td>
+          <td>Add new jpeg file to the GridFS store</td>
+          <td>Returns status code 201 to the caller</td>
+        </tr>
+        <tr>
+          <td>DELETE</td>
+          <td>/api/sources/file/:id</td>
+          <td>Delete an existing files by ID</td>
+          <td>Return status code 200 to the caller</td>
+        </tr>
+      </tbody>
+</table>
+
+### Examples
+
+```
+GET /api/sources/file
+```
+```JSON
+[
+  {
+    "id": "5291fcfa71fb223332000009",
+    "contentType": "image/jpeg",
+    "originalFileName": "jon.jpg",
+    "created": "2013-11-24T13:19:54.961Z",
+    "length": 55748
+  },
+  {
+    "id": "5291fdb1e4cf98cf32000009",
+    "contentType": "image/jpeg",
+    "originalFileName": "jon.jpg",
+    "created": "2013-11-24T13:22:57.784Z",
+    "length": 55748
+  }
+]
+```
+GET /api/sources/file/:id
+```
+```
+image/jpeg
+```
+
+```
+POST /api/sources/file
+```
+```
+201 CREATED
+```
+
+```
+DELETE /api/sources/file/:id
+```
+```
+200 OK
+```
+
+
+
 
 
