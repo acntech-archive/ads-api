@@ -22,6 +22,33 @@ exports.fetchConfig = function () {
     };
 };
 
+exports.saveConfig = function () {
+    return function (req, res) {
+        console.log('save config: ' + JSON.stringify(req.body));
+
+//        debugger;
+
+        TwitterConfig.remove({}, function (err) {
+            console.log("removed!");
+            if (err) {
+                console.log(err);
+                returnError(res, err);
+            } else {
+                var config = new TwitterConfig(req.body);
+                config.save(function (error, config) {
+                    if (error || !config)
+                        returnError(res, 400, error);
+                    else {
+                        res.json(config);
+                        console.log('save config yay: ' + JSON.stringify(config));
+                    }
+                });
+            }
+
+        });
+    };
+};
+
 exports.readAll = function () {
     var fetchTweets = function (config, res) {
         var response = res;
@@ -120,4 +147,10 @@ exports.readAll = function () {
             });
         }
     }
+};
+
+var returnError = function (response, code, err) {
+    console.log("Error! - " + err);
+    response.writeHead(code, { 'Content-Type': 'text/plain' });
+    response.end(err.toString());
 };

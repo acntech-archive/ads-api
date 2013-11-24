@@ -14,4 +14,5 @@ module.exports = function (app) {
     app.get('/api/sources/ruter', ruterApi.getDepartures());
     app.get('/api/sources/twitter', twitterSourceApi.readAll());
     app.get('/api/sources/twitter/edit', twitterSourceApi.fetchConfig());
+    app.post('/api/sources/twitter/edit', twitterSourceApi.saveConfig());
 };
