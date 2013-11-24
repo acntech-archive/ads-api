@@ -13,6 +13,7 @@ module.exports = function (app) {
     //File upload API Routes
     //app.get('/api/sources/fileupload', fileupload.readAllFiles());
     app.post('/api/sources/file', fileupload.addFile());
-    app.get('/api/sources/file', fileupload.getAllFileIDs());
+    app.get('/api/sources/file', fileupload.getAllFilesMetadata());
     app.get('/api/sources/file/:id', fileupload.getFile());
+    app.delete('/api/sources/file/:id', fileupload.deleteFile());
 };
