@@ -2,7 +2,8 @@ module.exports = function () {
 
     // Test data for Media Player
     var mongoose = require('mongoose'),
-        MediaPlayer = mongoose.model('MediaPlayer');
+        MediaPlayer = mongoose.model('MediaPlayer'),
+        TwitterConfig = mongoose.model('TwitterConfig');
 
     // Clear out the old data
     MediaPlayer.remove({}, function (err) {
@@ -11,6 +12,14 @@ module.exports = function () {
         }
         else {
             console.log('Successfully reset of media player test data in mongoDB.');
+        }
+    });
+    TwitterConfig.remove({}, function (err) {
+        if (err) {
+            console.log('Error deleting old twitter config from mongo db');
+        }
+        else {
+            console.log('Successfully reset of twitter config in mongoDB.');
         }
     });
 
@@ -26,7 +35,7 @@ module.exports = function () {
         else console.log('Saved new media player #ruby');
     });
 
-// Create media player named #ruby
+// Create media player named #scala
     mp = new MediaPlayer({
         name: 'Scala',
         ip: '127.0.0.101',
@@ -108,4 +117,4 @@ module.exports = function () {
         if (err) console.log('Error on saving media player #perl!');
         else console.log('Saved new media player #perl');
     });
-}
+};

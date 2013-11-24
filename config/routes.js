@@ -1,6 +1,7 @@
 module.exports = function (app) {
-    var mediaplayerApi = require('../app/controllers/mediaplayerApi');
-    var ruterApi = require('../app/controllers/ruterApi');
+    var mediaplayerApi = require('../app/controllers/mediaplayerApi'),
+        ruterApi = require('../app/controllers/ruterApi'),
+        twitterSourceApi = require('../app/controllers/twitterSourceApi');
 
     // Media Player API Routes
     app.get('/api/player', mediaplayerApi.readAllPlayers());
@@ -11,4 +12,7 @@ module.exports = function (app) {
 
     // Source API routes
     app.get('/api/sources/ruter', ruterApi.getDepartures());
+    app.get('/api/sources/twitter', twitterSourceApi.readAll());
+    app.get('/api/sources/twitter/edit', twitterSourceApi.fetchConfig());
+    app.post('/api/sources/twitter/edit', twitterSourceApi.saveConfig());
 };
