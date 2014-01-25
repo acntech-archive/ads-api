@@ -2,17 +2,31 @@ var oauth = require('oauth'),
     mongoose = require('mongoose'),
     TwitterConfig = mongoose.model('TwitterConfig'),
     NodeCache = require('node-cache'),
-    Q = require('q');
+    Q = require('q'),
+    url = require('url'),
+    http = require('http'),
+    request = require('request');
+    //LRU = require('lru-cache');
 
 var tweetCache = new NodeCache();
+var profilePicCache = new NodeCache();
+var imageCache = new NodeCache();
 var lastUpdate = 0;
+var maxNumOfImagesCached = 10;
+var imageTimeoutSecs = 5;
 
 exports.fetchConfig = function () {
     return function (req, res) {
         var deferred = Q.defer();
+        console.log("Fetching Twitter configuration...");
         TwitterConfig.find(function (error, configs) {
+            console.log("Twitter configuration callback.");
             // TODO: Something else than a "hacky" pull first result?
             var config = configs[0];
+            if(config == undefined)
+                console.log("Error: No twitter configuration found (check testdata.js)!");
+            else
+                console.log("Twitter configuration found.");
             deferred.resolve(config);
 
             if (res)
@@ -142,6 +156,73 @@ exports.readAll = function () {
             lastUpdate = new Date();
             exports.fetchConfig()(null, null).then(function (config) {
                 fetchTweets(config, response);
+            });
+        }
+    }
+};
+
+/**
+ * Fairly general image cache.
+ * Takes an encoded parameter (origin) as the parameter for the original URL of the image.
+ */
+exports.getImageCached = function () {
+    return function (req, res) {
+        var url_parts = url.parse(req.url, true);
+        var query = url_parts.query;
+        var imageUrl = query.origin;
+
+        if(imageUrl == undefined) {
+            console.log("Missing image URL as parameter.");
+            res.status(404).send("Missing image URL as parameter.");
+        }
+        else {
+            // Try to retrieve the image from cache
+            imageCache.get(imageUrl, function (err, value) {
+                if (!err) {
+                    value = value[imageUrl];
+                    // If the image was found in cache
+                    if(value != undefined) {
+                        res.writeHead(200, {
+                            'Content-Type': value.type
+                        });
+                        res.end(value.body);
+                    }
+                    // Else, download the image and save it in cache
+                    else {
+                        console.log("Image cache miss (URL: " + imageUrl + ").");
+                        request({url:imageUrl, encoding:null, timeout:2000}, function (error, response, body) {
+                            if (!error && response.statusCode == 200) {
+                                res.writeHead(200, {
+                                    'Content-Type': response.headers["content-type"]
+                                });
+                                var cachedImage = { body: body, type: response.headers["content-type"] }
+                                if(body.length > 50000000)  {
+                                    console.log("The image at " + imageUrl + " will not be cached due to its size.");
+                                }
+                                else {
+                                    imageCache.set(imageUrl, cachedImage, 1800, function( err, success ){
+                                        if(err || !success ) {
+                                            console.log("Saving image in cache failed.");
+                                        }
+                                        else {
+                                            console.log("Image saved in cache, total of " + imageCache.getStats().keys +
+                                                " images now saved in cache.");
+                                        }
+                                    });
+                                }
+                                res.end(body);
+                            }
+                            else {
+                                console.log("Retrieving the image from " + imageUrl + " failed, returning error message.");
+                                res.status(404).send("Image not found.");
+                            }
+                        });
+                    }
+                }
+                else {
+                    console.log("Error when retrieving image from cache, something is very wrong.");
+                    res.status(500).send("Image not found.");
+                }
             });
         }
     }
