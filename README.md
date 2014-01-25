@@ -18,7 +18,7 @@ Start API node server by: node server.js
 
 ```
 
-You also have to go to Dropbox and add the lines from Digital Signage/Div/twitterkonto.txt to config/testdata.js
+If you are going to use the Twitter API, you need to download the configuration used to log into the Twitter user account for searching. Contact the authors for more information, or use your own account (see intructions below).
 
 All of these tasks should be ran from the root folder of the project.
 
@@ -27,6 +27,8 @@ You should be able to test REST API for the ADS API Open a web browser and go to
 
 ## API
 Tip: use [Chrome Rest Console](https://chrome.google.com/webstore/detail/rest-console/cokgbflfommojglbmbpenpphppikmonn?hl=en) to test the REST API.
+
+### Media Players
 <table class="table table-hover table-striped">
       <thead>
         <tr>
@@ -68,6 +70,57 @@ Tip: use [Chrome Rest Console](https://chrome.google.com/webstore/detail/rest-co
         </tr>
       </tbody>
 </table>
+
+### Twitter
+<table class="table table-hover table-striped">
+      <thead>
+        <tr>
+          <th>HTTP Action</th>
+          <th>Route</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>GET</td>
+          <td>/api/sources/twitter</td>
+          <td>Read all tweets (search for hashtags)</td>
+        </tr>
+        <tr>
+          <td>GET</td>
+          <td>/api/sources/twitter/img</td>
+          <td>Read the image specified with the origin parameter (cached).</td>
+        </tr>
+        <tr>
+          <td>GET</td>
+          <td>/api/sources/twitter/edit</td>
+          <td>Read the current Twitter configuration</td>
+        </tr>
+        <tr>
+          <td>POST</td>
+          <td>/api/sources/twitter/edit</td>
+          <td>Replace the current Twitter configuration</td>
+        </tr>
+      </tbody>
+</table>
+
+### Ruter
+<table class="table table-hover table-striped">
+      <thead>
+        <tr>
+          <th>HTTP Action</th>
+          <th>Route</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>GET</td>
+          <td>/api/sources/ruter</td>
+          <td>Read next departures from Ruter from the configured stop</td>
+        </tr>
+</table>
+
 
 ## Information Model
 
@@ -136,4 +189,25 @@ Tip: use [Chrome Rest Console](https://chrome.google.com/webstore/detail/rest-co
        }
       }
 ]
+```
+
+## Twitter configuration
+If you are going to use a custom Twitter account, add configuration based on the following template to the testdata.js file (this inserts the configuration into MongoDB):
+```Javascript
+    // Create Twitter Configuration
+    var twCon = new TwitterConfig({
+        consumerKey:'insertconsumerkeyhere',
+        consumerSecret: 'insertconsumersecrethere',
+        accessToken: 'insertaccesstokenhere',
+        accessTokenSecret: 'insertaccesstokensecrethere',
+        hashes: [
+            { hash: 'ACNTech' }
+        ],
+        callbackUrl: 'http://this.is.a.placeholder.com',
+        numOfTweets: 15
+    });
+    twCon.save(function (err) {
+        if (err) console.log('Error on saving Twitter Configuration!');
+        else console.log('Saved new Twitter Configuration');
+    });
 ```
