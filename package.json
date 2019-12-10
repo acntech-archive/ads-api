@@ -52,7 +52,7 @@
         "karma-ng-html2js-preprocessor": "~0.1.0",
         "grunt-connect-proxy": "~0.1.5",
         "grunt-shell": "0.4.0",
-        "bower" : "1.2.6"
+        "bower" : "1.8.8"
     },
     "description": "* [Git](http://git-scm.com/downloads)\r * [NodeJS and npm](http://nodejs.org/download/)\r * [MongoDB](http://www.mongodb.org/downloads)\r * [Heroku Toolbelt](https://toolbelt.heroku.com/)\r * [A Heroku user account](https://devcenter.heroku.com/articles/quickstart) (see step 1,2 and 3)\r * [Chrome Rest Console](https://chrome.google.com/webstore/detail/rest-console/cokgbflfommojglbmbpenpphppikmonn?hl=en)",
     "main": "app.js",
